@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Dao.PdfDataMapper">
+
+	<insert id="addname" parameterType="PdfData">
+		insert into pdfdata(Name_File)values(#{Name_File})
+	</insert>
+	<insert id="addnumber" parameterType="PdfData">
+		UPDATE pdfdata SET PDF_Number = (#{PDF_Number}) WHERE Name_File =
+		(#{Name_File})
+	</insert>
+	<select id="getnumber" resultType="map">
+		select PDF_Number from pdfdata where Name_File = (#{Name_File})
+	</select>
+	<select id="getname" resultType="PdfData">
+		select Name_File from pdfdata
+	</select>
+</mapper>
