@@ -31,6 +31,38 @@ public class CRUD {
 	}
 
 	/**
+	 * 用于上传pdf文件中图片的宽度
+	 * 
+	 * @param imgwidth
+	 *            pdf文件中图片的宽度
+	 */
+	public static void AddImgWidth(String upload_Document, int imgwidth) {
+		SqlSession sqlSession = MyBatisUtil.getSqlSession(true);
+		String statement = "Dao.PdfDataMapper.addimgwidth";
+		Domain.PdfData p = new Domain.PdfData();
+		p.setName_File(upload_Document);
+		p.setImg_Width(imgwidth);
+		int retResult = sqlSession.insert(statement, p);
+		sqlSession.close();
+	}
+
+	/**
+	 * 用于上传pdf文件中图片的高度
+	 * 
+	 * @param imgheight
+	 *            pdf文件中图片的高度
+	 */
+	public static void AddImgHeight(String upload_Document, int imgheight) {
+		SqlSession sqlSession = MyBatisUtil.getSqlSession(true);
+		String statement = "Dao.PdfDataMapper.addimgheight";
+		Domain.PdfData p = new Domain.PdfData();
+		p.setName_File(upload_Document);
+		p.setImg_Height(imgheight);
+		int retResult = sqlSession.insert(statement, p);
+		sqlSession.close();
+	}
+
+	/**
 	 * 用于上传pdf页数到数据库
 	 * 
 	 * @param upload_Document
@@ -68,6 +100,49 @@ public class CRUD {
 		sqlSession.close();
 		return i;
 	}
+
+	/**
+	 * 用于获取pdf文件中图片的宽度
+	 * 
+	 * @param upload_Document
+	 *            pdf文件名
+	 * @return pdf文件中图片的宽度
+	 */
+	public static int GetImgWidth(String upload_Document) {
+		SqlSession sqlSession = MyBatisUtil.getSqlSession();
+		String statement = "Dao.PdfDataMapper.getimgwidth";
+		Domain.PdfData p = new Domain.PdfData();
+		p.setName_File(upload_Document);
+		List<String> retResult = (List) sqlSession.selectList(statement, p);
+		String str = retResult.toString();
+		String rgex = "=(.*?)}";
+		String a = getSubUtilSimple(str, rgex);
+		int i = Integer.parseInt(a);
+		sqlSession.close();
+		return i;
+	}
+
+	/**
+	 * 用于获取pdf文件中图片的高度
+	 * 
+	 * @param upload_Document
+	 *            pdf文件名
+	 * @return pdf文件中图片的高度
+	 */
+	public static int GetImgHeight(String upload_Document) {
+		SqlSession sqlSession = MyBatisUtil.getSqlSession();
+		String statement = "Dao.PdfDataMapper.getimgheight";
+		Domain.PdfData p = new Domain.PdfData();
+		p.setName_File(upload_Document);
+		List<String> retResult = (List) sqlSession.selectList(statement, p);
+		String str = retResult.toString();
+		String rgex = "=(.*?)}";
+		String a = getSubUtilSimple(str, rgex);
+		int i = Integer.parseInt(a);
+		sqlSession.close();
+		return i;
+	}
+
 
 	/**
 	 * 用于从数据库获取所用文件名

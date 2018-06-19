@@ -27,7 +27,7 @@ public class ImgToPdf {
 		String absolute_path_r = path + "Document/correct/";
 		String absolute_path = absolute_path_r.replace("file:/", "");
 		for (int s = 1; s <= a; s++) {
-			imageUrllist.add(absolute_path + "img_canvas/" + correct + "/" + s + ".jpg");
+			imageUrllist.add(absolute_path + "img_canvas/" + correct + "/" + s + ".png");
 		}
 		String pdfUrl = absolute_path + "pdf_canvas/" + correct + ".pdf";
 		File file = Pdf(imageUrllist, pdfUrl);

@@ -24,9 +24,9 @@ public class ImgToImg {
 		String absolute_path = absolute_path_r.replace("file:/", "");
 
 		for (int i = 1; i <= int_maxa; i++) {
-			String sourceFilePath = absolute_path + "img/" + s + "/" + i + ".jpg";
-			String canvasFilePath = absolute_path + "canvas/" + s + "/" + i + ".jpg";
-			String saveFilePath = absolute_path + "img_canvas/" + s + "/" + i + ".jpg";
+			String sourceFilePath = absolute_path + "img/" + s + "/" + i + ".png";
+			String canvasFilePath = absolute_path + "canvas/" + s + "/" + i + ".png";
+			String saveFilePath = absolute_path + "img_canvas/" + s + "/" + i + ".png";
 			File folder = new File(saveFilePath);
 			if (!folder.exists()) {
 				folder.mkdirs();

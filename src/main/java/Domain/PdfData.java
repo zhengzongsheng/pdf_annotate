@@ -9,7 +9,8 @@ public class PdfData {
 	private String Name_File;
 	private int PDF_Number;
 	private String Img_Path;
-
+	private int Img_Height;
+	private int Img_Width;
 	public PdfData() {
 
 	}
@@ -49,4 +50,20 @@ public class PdfData {
     public String toString() {
         return Name_File;
     }
+
+	public int getImg_Height() {
+		return Img_Height;
+	}
+
+	public void setImg_Height(int img_Height) {
+		Img_Height = img_Height;
+	}
+
+	public int getImg_Width() {
+		return Img_Width;
+	}
+
+	public void setImg_Width(int img_Width) {
+		Img_Width = img_Width;
+	}
 }

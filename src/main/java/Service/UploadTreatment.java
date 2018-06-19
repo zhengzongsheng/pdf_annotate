@@ -79,7 +79,8 @@ public class UploadTreatment {
 				temp.delete();
 			}
 			if (temp.isDirectory()) {
-				DelAllFile(Upload_Document + "/" + tempList[i]);// 先删除文件夹里面的文件
+				DelAllFile(Upload_Document + "/" + tempList[i]);// 删除文件夹里面的文件
+				System.out.println("临时文件夹删除成功！！");
 			}
 		}
 	}

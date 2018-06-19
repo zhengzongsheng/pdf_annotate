@@ -20,6 +20,7 @@ var b = -($("#background").offset().top); //获取div到浏览器顶端的距离
 //防止保存转换出的图片背景为黑色
 cvs.fillStyle = 'rgba(255, 255, 255, 0)';
 canvas.onmousedown = function(e) {
+
 	/*找到鼠标（画笔）的坐标*/
 	var pageX = e.pageX;
 	var pageY = e.pageY;
@@ -70,22 +71,83 @@ canvas.onmousedown = function(e) {
 		canvas.onmouseup = null;
 	}
 }
+//显示修改完成标志
+$("canvas").click(function() {
+	//获取批注的base64编码
+	var image = new Image();
+	image.src = canvas.toDataURL("image/png");
+	var abc = image.src
+	//base64 编码中含有大量加号，而+在 URL 传递时会被当成空格
+	var base64_ = abc.replace(/\+/g, '%2B');
+	//获取id为correct中的backgroundImage值
+	var a = document.getElementById("background").style.backgroundImage;
+	//替代开头固定url地址方便用正则表达式过滤
+	var n = a.replace('url("/correct/Document/correct/img/', '%2');
+	// 通过正则表达式得知当前正在批注的图片
+	var str = n.match(/\/(\S*).png/)[1];
+	// 显示修改完成标志
+	var annotated = "#img_" + str
+	$(annotated).addClass("annotated");
+})
 //清空画布事件
-//利用canvas的特性 每当高度或宽度被重设时，画布内容就会被清空
-var btn_clear = document.getElementById('clear_canvas');
-btn_clear.onclick = function() {
-	canvas.width = canvas.height;
-}
-
+$("#clear_canvas").click(function() {
+	//canvas.width = canvas.height; 用此方法会改变canvas画布大小
+	//此处用clearRect()方法
+	cvs.clearRect(0, 0, canvas.width, canvas.height);
+})
 //此处ajax只能返回字符串 所以采用location.assign()方法跳转页面。
 $("#download").click(function() {
 	window.location.assign("DownloadDocument")
 });
+//通过ajax调用ImgToImg、ImgToPdf类使得原图片和批注图片合并生成对应的pdf文件
+function save_correct() {
+	var xmlhttp;
+	if (window.XMLHttpRequest) {
+		//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+		xmlhttp = new XMLHttpRequest();
+	} else {
+		// IE6, IE5 浏览器执行代码
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.open("GET", "SaveCorrect", true);
+	xmlhttp.send();
+}
+//将图片以base64方式发送到后台
+$("#save_canvas").click(function() {
+	//获取批注的base64编码
+	var image = new Image();
+	image.src = canvas.toDataURL("image/png");
+	var abc = image.src
+	//base64 编码中含有大量加号，而+在 URL 传递时会被当成空格
+	var base64_ = abc.replace(/\+/g, '%2B');
 
+	//获取id为correct中的backgroundImage值
+	var a = document.getElementById("background").style.backgroundImage;
+	//替代开头固定url地址方便用正则表达式过滤
+	var n = a.replace('url("/correct/Document/correct/img/', '%2');
+	// 通过正则表达式得知当前正在批注的图片
+	var str = n.match(/\/(\S*).png/)[1];
 
-//$(".correct").width()+
+	// 通过ajax将获取到的base64以post方式传输到后台处理
+	var xmlhttp;
+	if (window.XMLHttpRequest) {
+		//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+		xmlhttp = new XMLHttpRequest();
+	} else {
+		// IE6, IE5 浏览器执行代码
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.open("POST", "Encode", true);
+	xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xmlhttp.send("img_name=" + str + "&base64=" + base64_);
+	save_correct();
+});
+//渐变动画效果
 $(".color_select").click(function() {
 	$("#color_fadeToggle").fadeToggle();
 });
-document.getElementById("canvas").setAttribute("width", $("#background").width()+"px")
-document.getElementById("canvas").setAttribute("height", $(".correct").height()+"px")
+//自适应画板的大小
+$("#canvas").attr({
+	width : $(".correct").width(),
+	height : $(".correct").height()
+});

@@ -7,16 +7,35 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page isELIgnored="false"%>
 <!DOCTYPE html>
-<html>
 
 <head>
 <meta charset="UTF-8">
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<meta name="viewport"
+	content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
 <title></title>
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/css/correct.css" />
 <style>
 #background {
 	cursor: url('${pageContext.request.contextPath}/img/cursor.png'), auto;
+}
+
+#annotated {
+	background: url('${pageContext.request.contextPath}/img/annotated.png')
+		no-repeat right;
+}
+
+.annotated:after {
+	position: absolute;
+	background: url('${pageContext.request.contextPath}/img/annotated.png');
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	content: '';
+	width: 40px;
+	height: 40px;
+	bottom: 0;
+	right: 0;
 }
 </style>
 </head>
@@ -103,7 +122,7 @@
 			<button id="clear_canvas">
 		</div>
 		<div class="img_button img_save">
-			<button id="btn">
+			<button id="save_canvas">
 		</div>
 		<div class="img_button img_download">
 			<button id="download">
@@ -113,9 +132,9 @@
 	<div class="sidebar_left">
 		<ul class="img_select">
 			<c:forEach var="i" begin="1" end="${correct_number}">
-
-				<li id="img_${i}"><img
-					src="${pageContext.request.contextPath}/Document/correct/img/${correct}/${i}.jpg" />
+				<li id="img_${i}" class=""><img
+					src="${pageContext.request.contextPath}/Document/correct/img/${correct}/${i}.png"
+					id="annotated" />
 					</form></li>
 
 			</c:forEach>
@@ -124,7 +143,7 @@
 	<div class="main">
 		<div class="correct">
 			<div id="background"
-				style="background-image:url('${pageContext.request.contextPath}/Document/correct/img/${correct}/1.jpg'); background-size: 100% 100%; background-repeat: no-repeat;">
+				style="background-image:url('${pageContext.request.contextPath}/Document/correct/img/${correct}/1.png'); background-size: 100% 100%; background-repeat: no-repeat;">
 				<canvas id="canvas"></canvas>
 			</div>
 
@@ -136,8 +155,7 @@
 	<script src="${pageContext.request.contextPath}/js/correct.js"
 		type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-			
-				
+	
 	//获取id为background的对象
 		var background = document.getElementById("background")
 		<c:forEach var="a" begin="1" end="${correct_number}">
@@ -149,16 +167,16 @@
 			image.src = canvas.toDataURL("image/png");
 			var abc = image.src
 			//base64 编码中含有大量加号，而+在 URL 传递时会被当成空格
-			var abcd = abc.replace(/\+/g, '%2B');
+			var base64_ = abc.replace(/\+/g, '%2B');
 			
 			//获取id为correct中的backgroundImage值
 			var a = document.getElementById("background").style.backgroundImage;
 			//替代开头固定url地址方便用正则表达式过滤
 			var n=a.replace('url("/correct/Document/correct/img/','%2');
 			// 通过正则表达式得知当前正在批注的图片
-			var str = n.match(/\/(\S*).jpg/)[1];
+			var str = n.match(/\/(\S*).png/)[1];
 			// 替换id为background对象的背景图片
-			document.getElementById("background").style.cssText = "background-image: url(${pageContext.request.contextPath}/Document/correct/img/${correct}/${a}.jpg);background-size: 100% 100%;background-repeat: no-repeat;"
+			document.getElementById("background").style.cssText = "background-image: url(${pageContext.request.contextPath}/Document/correct/img/${correct}/${a}.png);background-size: 100% 100%;background-repeat: no-repeat;"
 			
 			// 通过ajax将获取到的base64以post方式传输到后台处理
 			var xmlhttp;
@@ -171,56 +189,25 @@
 			}
 			xmlhttp.open("POST","Encode", true);
 			xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-			xmlhttp.send("img_name="+str+"&base64="+abcd);
+			xmlhttp.send("img_name="+str+"&base64="+base64_);
 			//消除批注
-			
 			 cvs.clearRect(0,0,canvas.width,canvas.height);  
 		});
 		</c:forEach>
-		//将图片以base64方式发送到后台
-		$("#btn").click(function(){
-		//获取批注的base64编码
-			var image = new Image();
-			image.src = canvas.toDataURL("image/png");
-			var abc = image.src
-			//base64 编码中含有大量加号，而+在 URL 传递时会被当成空格
-			var abcd = abc.replace(/\+/g, '%2B');
-			
-			//获取id为correct中的backgroundImage值
-			var a = document.getElementById("background").style.backgroundImage;
-			//替代开头固定url地址方便用正则表达式过滤
-			var n=a.replace('url("/correct/Document/correct/img/','%2');
-			// 通过正则表达式得知当前正在批注的图片
-			var str = n.match(/\/(\S*).jpg/)[1];
-			
-			// 通过ajax将获取到的base64以post方式传输到后台处理
-			var xmlhttp;
-			if (window.XMLHttpRequest) {
-				//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
-				xmlhttp = new XMLHttpRequest();
-			} else {
-				// IE6, IE5 浏览器执行代码
-				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-			}
-			xmlhttp.open("POST","Encode", true);
-			xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-			xmlhttp.send("img_name="+str+"&base64="+abcd);
-			save_correct();
-	});
-				//通过ajax调用ImgToImg、ImgToPdf类使得原图片和批注图片合并生成对应的pdf文件
-				function save_correct() {
-				var xmlhttp;
-				if(window.XMLHttpRequest) {
-					//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
-					xmlhttp = new XMLHttpRequest();
-				} else {
-					// IE6, IE5 浏览器执行代码
-					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-					}
-					xmlhttp.open("GET", "SaveCorrect", true);
-					xmlhttp.send();
-				}
+		$(function() {
+	var xmlhttp;
+	if (window.XMLHttpRequest) {
+		//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+		xmlhttp = new XMLHttpRequest();
+	} else {
+		// IE6, IE5 浏览器执行代码
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.open("POST","Magic", true);
+	xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+	xmlhttp.send("number="+${correct_number});
 
+});
 	</script>
 </body>
 

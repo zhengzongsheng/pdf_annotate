@@ -1,0 +1,17 @@
+Servlet\Magic.class
+Filter\EncodingFilter.class
+Servlet\CreateFolder.class
+Servlet\SaveCorrect.class
+Dao\CRUD.class
+Servlet\GetNumber.class
+Service\PdfToImg.class
+Filter\ValidateFilter.class
+Servlet\SelectData.class
+Dao\MyBatisUtil.class
+Domain\PdfData.class
+Service\UploadTreatment.class
+Servlet\DownloadDocument.class
+Servlet\Encode.class
+Servlet\UploadServlet.class
+Service\ImgToImg.class
+Service\ImgToPdf.class

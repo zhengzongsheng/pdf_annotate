@@ -10,8 +10,22 @@
 		UPDATE pdfdata SET PDF_Number = (#{PDF_Number}) WHERE Name_File =
 		(#{Name_File})
 	</insert>
+	<insert id="addimgwidth" parameterType="PdfData">
+		UPDATE pdfdata SET Img_Width = (#{Img_Width}) WHERE Name_File =
+		(#{Name_File})
+	</insert>
+	<insert id="addimgheight" parameterType="PdfData">
+	UPDATE pdfdata SET Img_Height = (#{Img_Height}) WHERE Name_File =
+		(#{Name_File})
+	</insert>
 	<select id="getnumber" resultType="map">
 		select PDF_Number from pdfdata where Name_File = (#{Name_File})
+	</select>
+	<select id="getimgwidth" resultType="map">
+		select Img_Width from pdfdata where Name_File = (#{Name_File})
+	</select>
+	<select id="getimgheight" resultType="map">
+		select Img_Height from pdfdata where Name_File = (#{Name_File})
 	</select>
 	<select id="getname" resultType="PdfData">
 		select Name_File from pdfdata
