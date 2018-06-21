@@ -1,7 +1,8 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%
 	String path = request.getContextPath();
-	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+	String basePath = request.getScheme() + "://"
+			+ request.getServerName() + ":" + request.getServerPort()
 			+ path + "/";
 %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -155,30 +156,47 @@
 	<script src="${pageContext.request.contextPath}/js/correct.js"
 		type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-	
-	//获取id为background的对象
+		//获取id为background的对象
 		var background = document.getElementById("background")
 		<c:forEach var="a" begin="1" end="${correct_number}">
 		//a代表当前条目的变量名称
-		$("#img_${a}").click(function(){
-			
-			//获取批注的base64编码
-			var image = new Image();
-			image.src = canvas.toDataURL("image/png");
-			var abc = image.src
-			//base64 编码中含有大量加号，而+在 URL 传递时会被当成空格
-			var base64_ = abc.replace(/\+/g, '%2B');
-			
-			//获取id为correct中的backgroundImage值
-			var a = document.getElementById("background").style.backgroundImage;
-			//替代开头固定url地址方便用正则表达式过滤
-			var n=a.replace('url("/correct/Document/correct/img/','%2');
-			// 通过正则表达式得知当前正在批注的图片
-			var str = n.match(/\/(\S*).png/)[1];
-			// 替换id为background对象的背景图片
-			document.getElementById("background").style.cssText = "background-image: url(${pageContext.request.contextPath}/Document/correct/img/${correct}/${a}.png);background-size: 100% 100%;background-repeat: no-repeat;"
-			
-			// 通过ajax将获取到的base64以post方式传输到后台处理
+		$("#img_${a}")
+				.click(
+						function() {
+
+							//获取批注的base64编码
+							var image = new Image();
+							image.src = canvas.toDataURL("image/png");
+							var abc = image.src
+							//base64 编码中含有大量加号，而+在 URL 传递时会被当成空格
+							var base64_ = abc.replace(/\+/g, '%2B');
+
+							// 获取id为correct中的backgroundImage值
+							var a = document.getElementById("background").style.backgroundImage;
+							// 通过正则表达式得知当前正在批注的图片
+							var str = a.match(/([^/]+).png/)[1];
+							// 替换id为background对象的背景图片
+							document.getElementById("background").style.cssText = "background-image: url(${pageContext.request.contextPath}/Document/correct/img/${correct}/${a}.png);background-size: 100% 100%;background-repeat: no-repeat;"
+
+							// 通过ajax将获取到的base64以post方式传输到后台处理
+							var xmlhttp;
+							if (window.XMLHttpRequest) {
+								//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+								xmlhttp = new XMLHttpRequest();
+							} else {
+								// IE6, IE5 浏览器执行代码
+								xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+							}
+							xmlhttp.open("POST", "Encode", true);
+							xmlhttp.setRequestHeader("Content-Type",
+									"application/x-www-form-urlencoded");
+							xmlhttp.send("img_name=" + str + "&base64="
+									+ base64_);
+							//消除批注
+							cvs.clearRect(0, 0, canvas.width, canvas.height);
+						});
+		</c:forEach>
+		$(function() {
 			var xmlhttp;
 			if (window.XMLHttpRequest) {
 				//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
@@ -187,27 +205,12 @@
 				// IE6, IE5 浏览器执行代码
 				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 			}
-			xmlhttp.open("POST","Encode", true);
-			xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-			xmlhttp.send("img_name="+str+"&base64="+base64_);
-			//消除批注
-			 cvs.clearRect(0,0,canvas.width,canvas.height);  
-		});
-		</c:forEach>
-		$(function() {
-	var xmlhttp;
-	if (window.XMLHttpRequest) {
-		//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
-		xmlhttp = new XMLHttpRequest();
-	} else {
-		// IE6, IE5 浏览器执行代码
-		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	xmlhttp.open("POST","Magic", true);
-	xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-	xmlhttp.send("number="+${correct_number});
+			xmlhttp.open("POST", "Magic", true);
+			xmlhttp.setRequestHeader("Content-Type",
+					"application/x-www-form-urlencoded");
+			xmlhttp.send("number=" + ${correct_number});
 
-});
+		});
 	</script>
 </body>
 

@@ -73,8 +73,6 @@ public class Encode extends HttpServlet {
 		os.flush();
 		is.close();
 		os.close();
-		ByteArrayOutputStream b = (ByteArrayOutputStream) os;
-
 	}
 
 }
